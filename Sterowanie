@@ -1,0 +1,112 @@
+//Badelek and Ciszewski's motors control program
+
+#include <Servo.h> //adding servo library
+//Input/output pin definitions
+#define button1 A5
+#define button2 A4
+#define button3 A3
+#define button4 A2
+#define button5 A1
+#define button6 A0
+Servo serwo; //create an object to control a servo
+
+#define dirPin1 2 //define pins responsible for direction and control for motor #1
+#define stepPin1 3
+#define stepsPerRevolution1 100
+
+#define dirPin2 4 //define pins responsible for direction and control for motor #2
+#define stepPin2 5
+#define stepsPerRevolution2 100
+
+#define dirPin3 7 //define pins responsible for direction and control for motor #2
+#define stepPin3 6
+#define stepsPerRevolution3 100
+
+int potentiometer=0; //analog pin used to connect the potentiometer
+int val; //variable to read the value from the analog pin
+
+void setup() {
+  Serial.begin(9600);
+
+serwo.attach(9); //attaches the servo on pin 9 to the servo object
+
+  
+  pinMode(button1, INPUT_PULLUP);
+  pinMode(button2, INPUT_PULLUP);
+  pinMode(button3, INPUT_PULLUP);
+  pinMode(button4, INPUT_PULLUP);
+  pinMode(button5, INPUT_PULLUP);
+  pinMode(button6, INPUT_PULLUP);
+
+  pinMode(stepPin1, OUTPUT);
+  pinMode(dirPin1, OUTPUT);
+}
+
+void loop() {
+
+val = analogRead(potentiometer);
+val = map (val,0,1023,0,180); //scale it to use it with the servo (between 0 to 180 degrees)
+serwo.write(val); //sets the servo position according to the scaled value
+delay(15); //waits for the servo to get there
+  
+  int buttonState1 = digitalRead(button1);
+  int buttonState2 = digitalRead(button2);
+  int buttonState3 = digitalRead(button3);
+  int buttonState4 = digitalRead(button4);
+  int buttonState5 = digitalRead(button5);
+  int buttonState6 = digitalRead(button6);
+  
+  //X axis
+
+  if (buttonState1 == LOW) {
+    for (int i = 0; i < 1 * stepsPerRevolution1; i++) {
+      // These four lines result in 1 step:
+      Serial.println("Os X - do gory");
+      digitalWrite(dirPin1, HIGH);
+      digitalWrite(stepPin1, HIGH);
+      digitalWrite(stepPin1, LOW);}}
+
+  if (buttonState2 == LOW) {
+    for (int i = 0; i < 1 * stepsPerRevolution1; i++) {
+      // These four lines result in 1 step:
+      Serial.println("Os X - do gory");
+      digitalWrite(dirPin1, LOW);
+      digitalWrite(stepPin1, HIGH);
+      digitalWrite(stepPin1, LOW);}}
+
+  //Y axis
+  if (buttonState3 == LOW) {
+    for (int i = 0; i < 1 * stepsPerRevolution2; i++) {
+      // These four lines result in 1 step:
+      Serial.println("Os Y - do gory");
+      digitalWrite(dirPin2, HIGH);
+      digitalWrite(stepPin2, HIGH);
+      digitalWrite(stepPin2, LOW);}}
+
+  if (buttonState4 == LOW) {
+    for (int i = 0; i < 1 * stepsPerRevolution2; i++) {
+      // These four lines result in 1 step:
+      Serial.println("Os Y - do dolu");
+      digitalWrite(dirPin2, LOW);
+      digitalWrite(stepPin2, HIGH);
+      digitalWrite(stepPin2, LOW);}}
+
+  //Z axis
+
+  if (buttonState5 == LOW) {
+    for (int i = 0; i < 1 * stepsPerRevolution3; i++) {
+      // These four lines result in 1 step:
+      Serial.println("Os Z - do gory");
+      digitalWrite(dirPin3, HIGH);
+      digitalWrite(stepPin3, HIGH);
+      digitalWrite(stepPin3, LOW);}}
+
+  if (buttonState6 == LOW) {
+    for (int i = 0; i < 1 * stepsPerRevolution3; i++) {
+      // These four lines result in 1 step:
+      Serial.println("Os Z - do dolu");
+      digitalWrite(dirPin3, HIGH);
+      digitalWrite(stepPin3, HIGH);
+      digitalWrite(stepPin3, LOW);}}
+
+}
