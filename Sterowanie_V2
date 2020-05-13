@@ -1,0 +1,148 @@
+#include <AccelStepper.h> // dodaje biblioteke o nazwieAccelStepper
+#include <Servo.h> // dodaje tutaj taka biblioteke sterujaca serwomechanizmem
+Servo ser; // tworzy obiekt do kontrolowania
+
+//pierwszy silnik
+#define dirPin1 2
+#define stepPin1 3
+#define motorInterfaceType 1
+
+//drugi silnik
+#define dirPin2 4
+#define stepPin2 5
+
+//trzeci silnik
+#define dirPin3 8
+#define stepPin3 9
+
+// dodaje tutaj silniki jako obiekty
+AccelStepper stepper1 = AccelStepper(motorInterfaceType, stepPin1, dirPin1);
+AccelStepper stepper2 = AccelStepper(motorInterfaceType, stepPin2, dirPin2);
+AccelStepper stepper3 = AccelStepper(motorInterfaceType, stepPin3, dirPin3);
+
+int poser = 0; // wstepna pozycja serwomechanizmu
+int val; // wstępna wartosc wielkosci zadanej
+void setup() {
+
+  Serial.begin(9600); // Określenie predkosci transmisji tzw. ,,baud-rate''
+  ser.attach(6);// polaczenie serwomechanizmu do pinu nr. 6
+
+  stepper1.setMaxSpeed(1000);
+  stepper1.setAcceleration(50);
+  stepper1.setSpeed(200);
+  stepper1.setCurrentPosition(0);
+
+
+  stepper2.setMaxSpeed(1000);
+  stepper2.setAcceleration(50);
+  stepper2.setSpeed(200);
+  stepper2.setCurrentPosition(0);
+
+  stepper3.setMaxSpeed(1000);
+  stepper3.setAcceleration(50);
+  stepper3.setSpeed(200);
+  stepper3.setCurrentPosition(0);
+}
+
+void loop() {
+
+  if (Serial.available()) // jezeli liczba bitow jest mozliwa do pobrania
+
+  {
+
+    val = Serial.read();// przeczytanie wartości
+
+    //silnik pierwszy, oś Z, obroty do gory
+    if (val == 'w') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,W''
+    {
+      stepper1.setCurrentPosition(stepper1.currentPosition() + 1); //inkrementacja biezacej pozycji silnika
+      stepper1.moveTo(stepper1.currentPosition());
+      stepper1.run();
+      Serial.println(stepper1.currentPosition());
+      delay(15);
+
+
+    }
+
+    //silnik pierwszy, oś Z, obroty do dolu
+
+    if (val == 's') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,S''
+    {
+      stepper1.setCurrentPosition(stepper1.currentPosition() - 1); //dekrementacja biezacej pozycji silnika
+      stepper1.moveTo(stepper1.currentPosition());
+      stepper1.run();
+      Serial.println(stepper1.currentPosition());
+      delay(15);
+
+    }
+
+    //silnik drugi, obroty w lewo
+
+    if (val == 'a') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,A''
+    {
+      stepper2.setCurrentPosition(stepper2.currentPosition() - 1);
+      stepper2.moveTo(stepper2.currentPosition());
+      stepper2.run();
+      Serial.println(stepper2.currentPosition());
+      delay(15);
+
+
+    }
+
+    //silnik drugi, obroty w prawo
+
+    if (val == 'd') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,D''
+    {
+      stepper2.setCurrentPosition(stepper2.currentPosition() + 1);
+      stepper2.moveTo(stepper2.currentPosition());
+      stepper2.run();
+      Serial.println(stepper2.currentPosition());
+      delay(15);
+
+    }
+
+    //silnik trzeci, obroty w lewo
+    if (val == 'z') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,Z''
+    {
+      stepper3.setCurrentPosition(stepper3.currentPosition() - 1);
+      stepper3.moveTo(stepper3.currentPosition());
+      stepper3.run();
+      Serial.println(stepper3.currentPosition());
+      delay(15);
+
+    }
+
+    //silnik trzeci, obroty w prawo
+    if (val == 'x') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,X''
+    {
+      stepper3.setCurrentPosition(stepper3.currentPosition() + 1);
+      stepper3.moveTo(stepper3.currentPosition());
+      stepper3.run();
+      Serial.println(stepper3.currentPosition());
+      delay(15);
+
+    }
+
+    if (val == 'n') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,N''
+
+    {
+      poser += 1; //to zmień pozycje serwmochanizmu o 1 (przeciwnie do ruchu wskazówek zegara)
+      ser.write(poser);//serwo zacznie się poruszać do uzyskania zadanej pozycji
+      Serial.println(poser);
+      delay(15);//opoznienie w celu osiagniecia pozycji przez serwomechanizm
+    }
+
+    if (val == 'm') //jeżeli wartosc jest przypisana do przycisku ,,M''
+
+    {
+
+      poser -= 1; //to zmień pozycje serwomechanizmu o 1 (zgodnie z ruchem wskazówek zegara)
+      ser.write(poser);//serwo zacznie się poruszać do uzyskania zadanej pozycji
+      Serial.println(poser);
+      delay(15);//opoznienie w celu osiagniecia pozycji przez serwomechanizm
+
+    }
+
+  }
+
+}
