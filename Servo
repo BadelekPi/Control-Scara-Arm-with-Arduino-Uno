@@ -9,3 +9,5 @@ void loop(){
    old=pot; 
   }
 }
+
+//zmiena old zapisuje poprzedni stan połozenia potencjometru (odczytanego napięcia)
