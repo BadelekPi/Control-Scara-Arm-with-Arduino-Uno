@@ -1,0 +1,11 @@
+int pot, old; //old - zmienna zapisujaca poprzedni odczyt
+
+void loop(){
+  pot=analogRead(A0);
+  pot=pot*180.0/1023.0; 
+  if (pot!=old){ //aby zmieniac polozenie tylko wtedy, kiedy sie zmienilo, a nie wyswietlac polozenie ciagle
+   Serial.print(pot);
+   silnik.write(pot);
+   old=pot; 
+  }
+}
