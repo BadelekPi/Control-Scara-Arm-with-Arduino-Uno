@@ -1,0 +1,98 @@
+
+//Input/output pin definitions
+
+
+//wpisujesz tutaj piny do jaki podlaczone za przyciski
+#define button1 A5
+#define button2 A4
+#define button3 A3
+#define button4 A2
+#define button5 A1
+#define button6 A0
+
+
+#define dirPin1 2              //piny controli kroku i obrotu dla silnika #1
+#define stepPin1 3
+#define stepsPerRevolution1 300
+
+#define dirPin2 4               //piny controli kroku i obrotu dla silnika #2
+#define stepPin2 5
+#define stepsPerRevolution2 300
+
+#define dirPin3 7               //piny controli kroku i obrotu dla silnika #2
+#define stepPin3 6
+#define stepsPerRevolution3 300
+
+
+void setup() 
+{
+  Serial.begin(9600);
+
+  
+  pinMode(button1, INPUT_PULLUP);
+  pinMode(button2, INPUT_PULLUP);
+  pinMode(button3, INPUT_PULLUP);
+  pinMode(button4, INPUT_PULLUP);
+  pinMode(button5, INPUT_PULLUP);
+  pinMode(button6, INPUT_PULLUP);
+
+  pinMode(stepPin1, OUTPUT);
+  pinMode(dirPin1, OUTPUT);
+  
+}
+
+void loop() {
+
+
+  
+  int buttonState1 = digitalRead(button1);
+  int buttonState2 = digitalRead(button2);
+  int buttonState3 = digitalRead(button3);
+  int buttonState4 = digitalRead(button4);
+  int buttonState5 = digitalRead(button5);
+  int buttonState6 = digitalRead(button6);
+  
+  //X axis
+
+  if (buttonState1 == LOW) {
+    
+      digitalWrite(dirPin1, HIGH);
+      digitalWrite(stepPin1, HIGH);
+      delay(20);
+  }
+  if (buttonState2 == LOW) {
+    
+      digitalWrite(dirPin1, LOW);
+      digitalWrite(stepPin1, HIGH);
+      delay(20);
+      
+  }
+  //Y axis
+  
+  if (buttonState3 == LOW) {
+      digitalWrite(dirPin2, HIGH);
+      digitalWrite(stepPin2, HIGH);
+      }
+
+  if (buttonState4 == LOW) {
+      digitalWrite(dirPin2, LOW);
+      digitalWrite(stepPin2, HIGH);}
+      delay(20);
+
+  //Z axis
+
+  if (buttonState5 == LOW) {
+    
+      digitalWrite(dirPin3, HIGH);
+      digitalWrite(stepPin3, HIGH);
+      delay(20);
+      }
+
+  if (buttonState6 == LOW) {
+   
+      digitalWrite(dirPin3, LOW);
+      digitalWrite(stepPin3, HIGH);
+      delay(20);
+      }
+
+}
