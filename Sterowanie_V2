@@ -1,21 +1,32 @@
-#include <AccelStepper.h> // dodaje biblioteke o nazwieAccelStepper
-#include <Servo.h> // dodaje tutaj taka biblioteke sterujaca serwomechanizmem
-Servo ser; // tworzy obiekt do kontrolowania
+#include <AccelStepper.h> // dodaje biblioteke AccelStepper
+#include <Servo.h> // dodaje biblioteke sterujaca serwomechanizmem
+
+
+Servo myservo;  // tworzy objekt servo do kontroli serwomechanizmu 
+
+#define button1 A5 //definiowanie przycisków odpowiedzialnych za sterownie silnikiem
+#define button2 A4
+#define button3 A3
+#define button4 A2
+#define button5 A1
+#define button6 11
+#define button A0 //definiowanie pinu odpowiedzialnego za zczytywanie wartości zadanej potencjometru
+
 
 //pierwszy silnik
-#define dirPin1 2
-#define stepPin1 3
-#define motorInterfaceType 1
+#define dirPin1 2 //zdefiniowanie pinu odpowiedzialnego za kierunek obrotu silnika
+#define stepPin1 3 //zdefiniowanie pinu odpowiedzialnego za krok silnika
+#define motorInterfaceType 1 //przypisanie silnika jako modelu w bibliotece
 
 //drugi silnik
-#define dirPin2 4
-#define stepPin2 5
+#define dirPin2 6
+#define stepPin2 7
 
 //trzeci silnik
 #define dirPin3 8
 #define stepPin3 9
 
-// dodaje tutaj silniki jako obiekty
+//dodanie silników jako obiektów do biblioteki Accel
 AccelStepper stepper1 = AccelStepper(motorInterfaceType, stepPin1, dirPin1);
 AccelStepper stepper2 = AccelStepper(motorInterfaceType, stepPin2, dirPin2);
 AccelStepper stepper3 = AccelStepper(motorInterfaceType, stepPin3, dirPin3);
@@ -25,12 +36,12 @@ int val; // wstępna wartosc wielkosci zadanej
 void setup() {
 
   Serial.begin(9600); // Określenie predkosci transmisji tzw. ,,baud-rate''
-  ser.attach(6);// polaczenie serwomechanizmu do pinu nr. 6
+  ser.attach(5);// polaczenie serwomechanizmu do pinu nr. 5
 
-  stepper1.setMaxSpeed(1000);
-  stepper1.setAcceleration(50);
-  stepper1.setSpeed(200);
-  stepper1.setCurrentPosition(0);
+  stepper1.setMaxSpeed(1000); //Ustawienie maksymalnej prędkości obrotowej silnika
+  stepper1.setAcceleration(50); //Ustawienie maksymalnego przyspieszenia silnika
+  stepper1.setSpeed(200); //Ustawienie prędkości obrotowej silnika
+  stepper1.setCurrentPosition(0); //Ustawienie wstępnej pozycji silnika
 
 
   stepper2.setMaxSpeed(1000);
@@ -42,6 +53,13 @@ void setup() {
   stepper3.setAcceleration(50);
   stepper3.setSpeed(200);
   stepper3.setCurrentPosition(0);
+  
+  pinMode(button1, INPUT_PULLUP); //ustawienie przycisków w funkcję INPUT_PULLUP
+  pinMode(button2, INPUT_PULLUP);
+  pinMode(button3, INPUT_PULLUP);
+  pinMode(button4, INPUT_PULLUP);
+  pinMode(button5, INPUT_PULLUP);
+  pinMode(button6, INPUT_PULLUP);
 }
 
 void loop() {
@@ -49,11 +67,8 @@ void loop() {
   if (Serial.available()) // jezeli liczba bitow jest mozliwa do pobrania
 
   {
-
-    val = Serial.read();// przeczytanie wartości
-
     //silnik pierwszy, oś Z, obroty do gory
-    if (val == 'w') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,W''
+     if (buttonState1 == LOW) 
     {
       stepper1.setCurrentPosition(stepper1.currentPosition() + 1); //inkrementacja biezacej pozycji silnika
       stepper1.moveTo(stepper1.currentPosition());
@@ -66,7 +81,7 @@ void loop() {
 
     //silnik pierwszy, oś Z, obroty do dolu
 
-    if (val == 's') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,S''
+     if (buttonState2 == LOW) 
     {
       stepper1.setCurrentPosition(stepper1.currentPosition() - 1); //dekrementacja biezacej pozycji silnika
       stepper1.moveTo(stepper1.currentPosition());
@@ -78,7 +93,7 @@ void loop() {
 
     //silnik drugi, obroty w lewo
 
-    if (val == 'a') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,A''
+      if (buttonState3 == LOW) 
     {
       stepper2.setCurrentPosition(stepper2.currentPosition() - 1);
       stepper2.moveTo(stepper2.currentPosition());
@@ -91,7 +106,7 @@ void loop() {
 
     //silnik drugi, obroty w prawo
 
-    if (val == 'd') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,D''
+     if (buttonState4 == LOW) 
     {
       stepper2.setCurrentPosition(stepper2.currentPosition() + 1);
       stepper2.moveTo(stepper2.currentPosition());
@@ -102,7 +117,7 @@ void loop() {
     }
 
     //silnik trzeci, obroty w lewo
-    if (val == 'z') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,Z''
+    if (buttonState5 == LOW) 
     {
       stepper3.setCurrentPosition(stepper3.currentPosition() - 1);
       stepper3.moveTo(stepper3.currentPosition());
@@ -113,7 +128,7 @@ void loop() {
     }
 
     //silnik trzeci, obroty w prawo
-    if (val == 'x') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,X''
+    if (buttonState6 == LOW) 
     {
       stepper3.setCurrentPosition(stepper3.currentPosition() + 1);
       stepper3.moveTo(stepper3.currentPosition());
@@ -123,26 +138,18 @@ void loop() {
 
     }
 
-    if (val == 'n') //jeżeli wartośc zmiennej jest przypisana do przycisku ,,N''
+     for(pos = 0; pos <= 180; pos += 1) // obrót od 0 do 180 stopni 
+  {                                  // w krokach co 1 stopień
+    myservo.write(pos);              // przekazanie do serwa obrotu o tyle ile jest zapisane w zmiennej 'pos'
+    delay(15);                       // poczekaj 15ms, aby serwo osiągnęło ustaloną pozycje
+  } 
+  for(pos = 180; pos>=0; pos-=1)     // obrót od 180 do 0 stopni 
+  {                                
+    myservo.write(pos);              // przekazanie do serwa obrotu o tyle ile jest zapisane w zmiennej 'pos'
+    delay(15);                       // poczekaj 15ms, aby serwo osiągnęło ustaloną pozycje
+  } 
 
-    {
-      poser += 1; //to zmień pozycje serwmochanizmu o 1 (przeciwnie do ruchu wskazówek zegara)
-      ser.write(poser);//serwo zacznie się poruszać do uzyskania zadanej pozycji
-      Serial.println(poser);
-      delay(15);//opoznienie w celu osiagniecia pozycji przez serwomechanizm
-    }
-
-    if (val == 'm') //jeżeli wartosc jest przypisana do przycisku ,,M''
-
-    {
-
-      poser -= 1; //to zmień pozycje serwomechanizmu o 1 (zgodnie z ruchem wskazówek zegara)
-      ser.write(poser);//serwo zacznie się poruszać do uzyskania zadanej pozycji
-      Serial.println(poser);
-      delay(15);//opoznienie w celu osiagniecia pozycji przez serwomechanizm
-
-    }
-
+   
   }
 
 }
